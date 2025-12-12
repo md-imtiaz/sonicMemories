@@ -18,6 +18,8 @@ import com.shuvostechworld.sonicmemories.ui.UiState
 import com.shuvostechworld.sonicmemories.ui.adapter.DiaryAdapter
 import com.shuvostechworld.sonicmemories.utils.AccessibilityUtils
 import dagger.hilt.android.AndroidEntryPoint
+import com.shuvostechworld.sonicmemories.ui.dialog.ReviewBottomSheet
+import java.io.File
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -41,7 +43,27 @@ class MainActivity : AppCompatActivity() {
 
         setupRecyclerView()
         setupFab()
+        setupReviewResultListener()
         observeUiState()
+    }
+
+    private fun setupReviewResultListener() {
+        supportFragmentManager.setFragmentResultListener(ReviewBottomSheet.REQUEST_KEY, this) { _, bundle ->
+            val saved = bundle.getBoolean(ReviewBottomSheet.RESULT_SAVED)
+            if (saved) {
+                val mood = bundle.getInt(ReviewBottomSheet.RESULT_MOOD)
+                val path = bundle.getString(ReviewBottomSheet.RESULT_FILE_PATH)
+                if (path != null) {
+                    val file = File(path)
+                    viewModel.saveFinalEntry(file, mood)
+                    AccessibilityUtils.announceToScreenReader(binding.root, "Memory Saved")
+                    AccessibilityUtils.vibrate(this, 100)
+                    Snackbar.make(binding.root, "Memory Saved", Snackbar.LENGTH_SHORT).show()
+                }
+            } else {
+                AccessibilityUtils.announceToScreenReader(binding.root, "Memory Discarded")
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -82,12 +104,21 @@ class MainActivity : AppCompatActivity() {
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(binding.recyclerView)
     }
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                Toast.makeText(this, "Permission granted. Press and hold to record.", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Permission required to record audio", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     private fun setupFab() {
         binding.fabRecord.setOnTouchListener { v, event ->
             v.performClick()
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    startRecording()
+                    checkPermissionAndStartRecording()
                     true
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -99,6 +130,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkPermissionAndStartRecording() {
+        if (androidx.core.content.ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.RECORD_AUDIO
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            startRecording()
+        } else {
+            requestPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
     private fun startRecording() {
         AccessibilityUtils.vibrate(this, 50)
         AccessibilityUtils.announceToScreenReader(binding.fabRecord, "Recording Started")
@@ -107,8 +150,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun stopRecording() {
         AccessibilityUtils.vibrate(this, 50)
-        AccessibilityUtils.announceToScreenReader(binding.fabRecord, "Memory Saved")
-        viewModel.stopAndSaveEntry()
+        val file = viewModel.stopRecording()
+        if (file != null) {
+            AccessibilityUtils.announceToScreenReader(binding.fabRecord, "Review Memory")
+            ReviewBottomSheet.newInstance(file.absolutePath).show(supportFragmentManager, ReviewBottomSheet.TAG)
+        }
     }
 
     private fun observeUiState() {
