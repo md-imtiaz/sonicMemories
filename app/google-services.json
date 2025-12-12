@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1073234698004",
+    "project_id": "sonicmemories-751dd",
+    "storage_bucket": "sonicmemories-751dd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073234698004:android:dc945be6aab33eb9b7ec01",
+        "android_client_info": {
+          "package_name": "com.shuvostechworld.sonicmemories"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1073234698004-8iiskmevoc5qas2pdchfgo28s6lclmj7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shuvostechworld.sonicmemories",
+            "certificate_hash": "e56303601ec792e3ef0bcdf3d9905b0561b1d9cc"
+          }
+        },
+        {
+          "client_id": "1073234698004-f6j0h2jcmq8ru88467n86hqbv4pf1ka0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDk1NjkRFYsm2ba8E2sSOyp57HGORqsf7k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1073234698004-f6j0h2jcmq8ru88467n86hqbv4pf1ka0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

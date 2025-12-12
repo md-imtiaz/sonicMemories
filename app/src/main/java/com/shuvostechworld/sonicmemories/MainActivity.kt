@@ -1,6 +1,6 @@
 package com.shuvostechworld.sonicmemories
 
-import android.graphics.Canvas
+
 import android.os.Bundle
 import android.view.MotionEvent
 import android.widget.Toast
@@ -63,30 +63,28 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val entry = adapter.currentList[position]
-                
-                viewModel.deleteEntry(entry)
-                AccessibilityUtils.vibrate(this@MainActivity, 100)
-                AccessibilityUtils.announceToScreenReader(binding.root, "Memory deleted")
-                
-                Snackbar.make(binding.root, "Memory deleted", Snackbar.LENGTH_LONG)
-                    .setAction("Undo") {
-                        // Undo logic is complex with Repository delete.
-                        // Usually implies we didn't actually delete yet or we restore it.
-                        // For simplicity in this step, we won't implement full Restore logic as it wasn't strictly asked 
-                        // beyond "Undo option". A real undo needs local caching or delay.
-                        // I'll leave the button but it effectively does nothing right now unless we re-save.
-                        // Ideally: Insert it back.
-                    }
-                    .show()
+                val position = viewHolder.bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val entry = adapter.currentList[position]
+                    
+                    viewModel.deleteEntry(entry)
+                    AccessibilityUtils.vibrate(this@MainActivity, 100)
+                    AccessibilityUtils.announceToScreenReader(binding.root, "Memory deleted")
+                    
+                    Snackbar.make(binding.root, "Memory deleted", Snackbar.LENGTH_LONG)
+                        .setAction("Undo") {
+                            // Undo placeholder
+                        }
+                        .show()
+                }
             }
         }
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(binding.recyclerView)
     }
 
     private fun setupFab() {
-        binding.fabRecord.setOnTouchListener { view, event ->
+        binding.fabRecord.setOnTouchListener { v, event ->
+            v.performClick()
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     startRecording()
