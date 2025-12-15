@@ -26,6 +26,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private var isActionProcessing = false
+
     private lateinit var binding: ActivityMainBinding
     private val viewModel: DiaryViewModel by viewModels()
 
@@ -78,6 +80,8 @@ class MainActivity : AppCompatActivity() {
         setupWriteFab()
         setupPauseFab()
         setupReviewResultListener()
+        setupBackStackListener()
+        setupSearch()
         observeUiState()
         observeRecordingState()
     }
@@ -112,6 +116,25 @@ class MainActivity : AppCompatActivity() {
             },
             onItemClick = { entry ->
                 openDetailFragment(entry.id)
+            },
+            onEditClick = { entry ->
+                openDetailFragment(entry.id)
+            },
+            onDeleteClick = { entry ->
+                com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                    .setTitle("Delete Memory?")
+                    .setMessage("Are you sure you want to delete this memory? This action cannot be undone.")
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton("Yes") { dialog, _ ->
+                        viewModel.deleteEntry(entry)
+                        AccessibilityUtils.vibrate(this, 100)
+                        AccessibilityUtils.announceToScreenReader(binding.root, "Memory deleted")
+                        Snackbar.make(binding.root, "Memory deleted", Snackbar.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    }
+                    .show()
             }
         )
         binding.recyclerView.adapter = adapter
@@ -126,6 +149,37 @@ class MainActivity : AppCompatActivity() {
             .addToBackStack(null)
             .commit()
     }
+    
+    private fun setupBackStackListener() {
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (supportFragmentManager.backStackEntryCount > 0) {
+                 // In Detail Fragment
+                 binding.recyclerView.visibility = android.view.View.GONE
+                 binding.fabWrite.hide()
+                 binding.fabRecord.hide()
+            } else {
+                 // Home
+                 binding.recyclerView.visibility = android.view.View.VISIBLE
+                 binding.fabWrite.show()
+                 binding.fabRecord.show()
+            }
+        }
+    }
+
+    private fun setupSearch() {
+        val searchView = findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView)
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                searchView.clearFocus()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.updateSearchQuery(newText ?: "")
+                return true
+            }
+        })
+    }
 
     private fun setupSwipeToDelete() {
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
@@ -136,17 +190,23 @@ class MainActivity : AppCompatActivity() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    val entry = adapter.currentList[position]
+                    val item = adapter.currentList[position]
                     
-                    viewModel.deleteEntry(entry)
-                    AccessibilityUtils.vibrate(this@MainActivity, 100)
-                    AccessibilityUtils.announceToScreenReader(binding.root, "Memory deleted")
-                    
-                    Snackbar.make(binding.root, "Memory deleted", Snackbar.LENGTH_LONG)
-                        .setAction("Undo") {
-                            // Undo placeholder
-                        }
-                        .show()
+                    if (item is com.shuvostechworld.sonicmemories.ui.adapter.ListItem.Entry) {
+                        val entry = item.entry
+                        viewModel.deleteEntry(entry)
+                        AccessibilityUtils.vibrate(this@MainActivity, 100)
+                        AccessibilityUtils.announceToScreenReader(binding.root, "Memory deleted")
+                        
+                        Snackbar.make(binding.root, "Memory deleted", Snackbar.LENGTH_LONG)
+                            .setAction("Undo") {
+                                // Undo placeholder
+                            }
+                            .show()
+                    } else {
+                        // Header or other type - reset swipe
+                        adapter.notifyItemChanged(position)
+                    }
                 }
             }
         }
@@ -164,7 +224,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFab() {
         binding.fabRecord.setOnClickListener {
-            handleMainFabClick()
+            if (!isActionProcessing) {
+                 handleMainFabClick()
+            }
         }
     }
 
@@ -212,16 +274,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startRecording() {
+        if (isActionProcessing) return
+        isActionProcessing = true
+        
         lifecycleScope.launch {
-            // Play start tone
-            soundManager.playSound(R.raw.start_sound, SoundManager.TONE_START)
-            
-            // Wait 500ms to avoid recording TalkBack announcement
-            kotlinx.coroutines.delay(500)
-            
-            AccessibilityUtils.vibrate(this@MainActivity, 50)
-            viewModel.startRecording()
-            AccessibilityUtils.announceToScreenReader(binding.fabRecord, "Recording Started")
+            try {
+                // Play start tone
+                soundManager.playSound(R.raw.start_sound, SoundManager.TONE_START)
+                
+                // Wait 500ms to avoid recording TalkBack announcement
+                kotlinx.coroutines.delay(500)
+                
+                AccessibilityUtils.vibrate(this@MainActivity, 50)
+                viewModel.startRecording()
+                AccessibilityUtils.announceToScreenReader(binding.fabRecord, "Recording Started")
+            } finally {
+                // Allow interactions again after a short buffer
+                kotlinx.coroutines.delay(200)
+                isActionProcessing = false
+            }
         }
     }
 
@@ -246,36 +317,74 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun updateUiForState(state: DiaryViewModel.RecordingState) {
         when (state) {
             DiaryViewModel.RecordingState.Idle -> {
                 binding.fabPause.visibility = android.view.View.GONE
-                binding.fabRecord.text = "Record Memory"
+                binding.fabRecord.text = "Record"
                 binding.fabRecord.icon = androidx.core.content.ContextCompat.getDrawable(this, android.R.drawable.ic_btn_speak_now)
                 binding.fabRecord.contentDescription = "Double tap to start recording"
+                
+                // Stop Animation
+                binding.fabRecord.animate().scaleX(1f).scaleY(1f).setDuration(200).start()
+                
+                if (adapter.itemCount > 0) {
+                     binding.recyclerView.visibility = android.view.View.VISIBLE
+                     binding.layoutEmptyState.visibility = android.view.View.GONE
+                } else {
+                     binding.recyclerView.visibility = android.view.View.GONE
+                     binding.layoutEmptyState.visibility = android.view.View.VISIBLE
+                }
             }
             DiaryViewModel.RecordingState.Recording -> {
                 binding.fabPause.visibility = android.view.View.VISIBLE
                 binding.fabPause.setImageResource(android.R.drawable.ic_media_pause)
                 binding.fabPause.contentDescription = "Pause Recording"
+                binding.recyclerView.visibility = android.view.View.GONE
+                binding.layoutEmptyState.visibility = android.view.View.GONE
                 
-                binding.fabRecord.text = "Stop Recording"
-                binding.fabRecord.icon = androidx.core.content.ContextCompat.getDrawable(this, com.google.android.material.R.drawable.ic_m3_chip_close) // Fallback or use standard stop icon
+                binding.fabRecord.text = "Stop"
+                binding.fabRecord.icon = androidx.core.content.ContextCompat.getDrawable(this, com.google.android.material.R.drawable.ic_m3_chip_close) 
                 binding.fabRecord.contentDescription = "Double tap to stop recording"
+                
+                // Start Pulse Animation
+                binding.fabRecord.animate().scaleX(1.1f).scaleY(1.1f).setDuration(800).withEndAction { 
+                     // Simple continuous pulse using ViewPropertyAnimator loop
+                     runPulseAnimation()
+                }.start()
             }
             DiaryViewModel.RecordingState.Paused -> {
                 binding.fabPause.visibility = android.view.View.VISIBLE
                 binding.fabPause.setImageResource(android.R.drawable.ic_media_play)
                 binding.fabPause.contentDescription = "Resume Recording"
+                binding.recyclerView.visibility = android.view.View.GONE
+                binding.layoutEmptyState.visibility = android.view.View.GONE
                 
-                binding.fabRecord.text = "Stop Recording"
-                 // stop icon
+                binding.fabRecord.text = "Stop"
+                
+                // Pause Animation (Freeze or Reset)
+                binding.fabRecord.animate().cancel()
+                binding.fabRecord.scaleX = 1f
+                binding.fabRecord.scaleY = 1f
             }
         }
         
-        // Fix for icon not updating correctly if using standard drawable directly in code without context compat sometimes
         if (state != DiaryViewModel.RecordingState.Idle) {
-             binding.fabRecord.setIconResource(R.drawable.ic_stop_24) // Attempt to use a local resource if exists, otherwise fallback
+             binding.fabRecord.setIconResource(R.drawable.ic_stop_24)
+        }
+    }
+    
+    private fun runPulseAnimation() {
+        if (viewModel.recordingState.value == DiaryViewModel.RecordingState.Recording) {
+             binding.fabRecord.animate().scaleX(1f).scaleY(1f).setDuration(800).withEndAction {
+                  if (viewModel.recordingState.value == DiaryViewModel.RecordingState.Recording) {
+                      binding.fabRecord.animate().scaleX(1.1f).scaleY(1.1f).setDuration(800).withEndAction {
+                           runPulseAnimation()
+                      }.start()
+                  }
+             }.start()
         }
     }
 
@@ -285,7 +394,18 @@ class MainActivity : AppCompatActivity() {
                 launch {
                     viewModel.uiState.collect { state ->
                         when (state) {
-                            is UiState.Success -> adapter.submitList(state.entries)
+                            is UiState.Success -> {
+                                adapter.submitEntries(state.entries)
+                                if (viewModel.recordingState.value == DiaryViewModel.RecordingState.Idle) {
+                                    if (state.entries.isEmpty()) {
+                                        binding.layoutEmptyState.visibility = android.view.View.VISIBLE
+                                        binding.recyclerView.visibility = android.view.View.GONE
+                                    } else {
+                                        binding.layoutEmptyState.visibility = android.view.View.GONE
+                                        binding.recyclerView.visibility = android.view.View.VISIBLE
+                                    }
+                                }
+                            }
                             is UiState.Error -> Toast.makeText(this@MainActivity, state.message, Toast.LENGTH_LONG).show()
                             else -> Unit
                         }
