@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradient"
+    android:orientation="vertical">
+
+    <!-- Scrollable Content (Takes remaining space) -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:paddingBottom="16dp">
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:background="#555555"
+                android:backgroundTint="#80FFFFFF"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Sonic Studio"
+                android:textColor="@android:color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_player"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="#202020"
+                app:strokeWidth="0dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_title">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="24dp">
+
+                    <ImageView
+                        android:id="@+id/iv_waveform"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_waveform"
+                        app:tint="#00E5FF"
+                        android:alpha="0.8"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_play_pause"
+                        style="@style/Widget.MaterialComponents.Button.Icon"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_marginTop="16dp"
+                        android:backgroundTint="#333333"
+                        android:contentDescription="Play recorded audio"
+                        app:icon="@android:drawable/ic_media_play"
+                        app:iconSize="32dp"
+                        app:iconTint="#00E5FF"
+                        app:cornerRadius="32dp"
+                        app:strokeColor="#00E5FF"
+                        app:strokeWidth="1dp"
+                        app:layout_constraintTop_toBottomOf="@id/iv_waveform"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tv_player_hint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Preview Memory"
+                        android:textColor="#AAAAAA"
+                        android:textSize="12sp"
+                        app:layout_constraintTop_toBottomOf="@id/btn_play_pause"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_mood_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Vibe Check (5/10)"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_player" />
+
+            <SeekBar
+                android:id="@+id/seekbar_mood"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:max="10"
+                android:progress="5"
+                android:progressBackgroundTint="#555555"
+                android:progressTint="#00E5FF"
+                android:thumbTint="#00E5FF"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_mood_label" />
+
+            <TextView
+                android:id="@+id/tv_ambient_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Background Ambience"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/seekbar_mood" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_ambient"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Select Mood"
+                android:textColorHint="#AAAAAA"
+                app:boxStrokeColor="#00E5FF"
+                app:boxStrokeWidth="1dp"
+                app:hintTextColor="#00E5FF"
+                app:startIconDrawable="@android:drawable/ic_menu_search"
+                app:startIconTint="#00E5FF"
+                app:layout_constraintTop_toBottomOf="@id/tv_ambient_label">
+
+                <AutoCompleteTextView
+                    android:id="@+id/auto_complete_ambient"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="@android:color/white"
+                    android:background="#202020"
+                    tools:ignore="LabelFor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_ambient_sounds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_ambient_sound"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_ambient" />
+                
+            <LinearLayout
+                android:id="@+id/layout_selected_ambient"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/background_chip"
+                android:backgroundTint="#333333"
+                android:padding="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_ambient">
+                
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_music_note_24"
+                    app:tint="@color/zen_accent" />
+                    
+                <TextView
+                    android:id="@+id/tv_selected_ambient_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:text="Rain Sounds"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"/>
+                    
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_change_ambient"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Change"
+                    android:textColor="@color/zen_accent"/>
+            </LinearLayout>
+
+            <!-- Location Section (Visible & Editable) -->
+            <TextView
+                android:id="@+id/tv_location_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Location"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_ambient_sounds" />
+
+            <LinearLayout
+                 android:id="@+id/layout_location_container"
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="12dp"
+                 android:background="@drawable/background_chip"
+                 android:backgroundTint="#333333"
+                 android:clickable="true"
+                 android:focusable="true"
+                 android:orientation="horizontal"
+                 android:gravity="center_vertical"
+                 android:padding="16dp"
+                 app:layout_constraintTop_toBottomOf="@id/tv_location_label"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintEnd_toEndOf="parent">
+
+                 <ImageView
+                     android:layout_width="24dp"
+                     android:layout_height="24dp"
+                     android:src="@drawable/ic_location_on_24"
+                     app:tint="@color/zen_accent"/>
+
+                 <TextView
+                     android:id="@+id/tv_location_text"
+                     android:layout_width="0dp"
+                     android:layout_height="wrap_content"
+                     android:layout_weight="1"
+                     android:layout_marginStart="12dp"
+                     android:text="Fetching location..."
+                     android:textColor="@android:color/white"
+                     android:ellipsize="end"
+                     android:maxLines="1"/>
+
+                 <ImageView
+                     android:layout_width="24dp"
+                     android:layout_height="24dp"
+                     android:src="@android:drawable/ic_menu_edit"
+                     app:tint="@color/zen_accent"
+                     android:contentDescription="Edit Location"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_tags_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Tags (Optional)"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layout_location_container" />
+
+            <!-- Add Tag Dropdown -->
+             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_layout_add_tag"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Add a Tag"
+                android:textColorHint="#AAAAAA"
+                app:boxStrokeColor="#00E5FF"
+                app:boxStrokeWidth="1dp"
+                app:hintTextColor="#00E5FF"
+                app:startIconDrawable="@android:drawable/ic_input_add"
+                app:startIconTint="#00E5FF"
+                app:layout_constraintTop_toBottomOf="@id/tv_tags_label">
+
+                <AutoCompleteTextView
+                    android:id="@+id/auto_complete_add_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="@android:color/white"
+                    android:background="#202020"
+                    tools:ignore="LabelFor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Selected Tags ChipGroup (Wrapping) -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_tags"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:chipSpacing="8dp"
+                app:singleSelection="false"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/input_layout_add_tag" />
+            
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Sticky Footer with Safe Area Padding -->
+    <LinearLayout
+        android:id="@+id/layout_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="48dp"
+        android:background="#202020"
+        android:elevation="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Save to Sonic Memories"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:backgroundTint="#00E5FF"
+            app:cornerRadius="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_discard"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:text="Discard"
+            android:textColor="#FF5252" />
+
+    </LinearLayout>
+
+</LinearLayout>

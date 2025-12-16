@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Filter Chip Style -->
+    <style name="Widget.SonicMemories.Chip.Filter" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/selector_chip_background</item>
+        <item name="android:textColor">@color/selector_chip_text</item>
+        <item name="chipStrokeColor">@color/zen_accent</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipCornerRadius">16dp</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="checkedIconTint">@color/zen_black</item>
+        <item name="rippleColor">@color/zen_accent</item>
+    </style>
+
+    <!-- Choice Chip Style (for Tags) -->
+    <style name="Widget.SonicMemories.Chip.Choice" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/selector_chip_background</item>
+        <item name="android:textColor">@color/selector_chip_text</item>
+        <item name="chipStrokeColor">@color/zen_accent</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipCornerRadius">16dp</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="checkedIconTint">@color/zen_black</item>
+        <item name="rippleColor">@color/zen_accent</item>
+    </style>
+</resources>

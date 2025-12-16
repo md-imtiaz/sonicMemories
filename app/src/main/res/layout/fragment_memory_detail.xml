@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradient"
+    android:clickable="true" 
+    android:focusable="true"
+    tools:context=".ui.MemoryDetailFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Title Input -->
+            <EditText
+                android:id="@+id/etTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:hint="Title of your memory..."
+                android:imeOptions="actionNext"
+                android:inputType="textCapSentences"
+                android:textColor="@android:color/white"
+                android:textColorHint="#888888"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="#AAAAAA"
+                android:textSize="14sp"
+                tools:text="Nov 12, 2024 • 10:30 AM" />
+
+            <!-- Waveform Visualizer -->
+            <com.shuvostechworld.sonicmemories.ui.custom.WaveformView
+                android:id="@+id/waveformView"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <!-- Record Button Area -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingTop="16dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRecord"
+                    style="@style/Widget.MaterialComponents.Button.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#FF0000"
+                    android:text="Record Memory"
+                    android:textColor="@android:color/white"
+                    app:cornerRadius="24dp"
+                    app:icon="@drawable/ic_mic_24"
+                    app:iconTint="@android:color/white" />
+
+            </LinearLayout>
+
+            <!-- Audio Player Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAudioPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="#222222"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="#FFFF00"
+                app:strokeWidth="1dp"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <ImageButton
+                        android:id="@+id/btnPlayPause"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Play Audio"
+                        android:src="@android:drawable/ic_media_play"
+                        app:tint="#FFFF00" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Audio Recording"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvAudioStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tap to play"
+                            android:textColor="#BBBBBB"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Start Dictation Toolbar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:gravity="end">
+                
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDictate"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fast Dictation"
+                    android:textColor="#FFFF00"
+                    app:icon="@drawable/ic_mic_24"
+                    app:iconTint="#FFFF00" />
+            </LinearLayout>
+
+            <!-- Content Input -->
+            <EditText
+                android:id="@+id/etContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:hint="Write your thoughts..."
+                android:inputType="textMultiLine|textCapSentences"
+                android:lineSpacingExtra="4dp"
+                android:minLines="10"
+                android:textColor="@android:color/white"
+                android:textColorHint="#666666"
+                android:textSize="18sp" />
+
+            <!-- Tags Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Tags"
+                android:textColor="#AAAAAA"
+                android:textStyle="bold"/>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupTags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputLayoutTag"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Add tag..."
+                    app:boxStrokeColor="#FFFF00"
+                    app:hintTextColor="#FFFF00">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTagInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
+                        android:imeOptions="actionDone"
+                        android:inputType="textCapWords"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddTag"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add"
+                    android:textColor="#FFFF00"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:backgroundTint="#FFFF00"
+        android:contentDescription="Save Memory"
+        android:src="@android:drawable/ic_menu_save"
+        app:tint="@android:color/black" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

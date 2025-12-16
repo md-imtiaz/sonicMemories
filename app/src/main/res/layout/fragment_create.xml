@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/zen_black"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_memory"
+        android:textColor="@android:color/white"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="48dp"
+        android:importantForAccessibility="yes" />
+
+    <!-- Media Controls Row -->
+    <LinearLayout
+        android:id="@+id/layout_media_controls"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:layout_marginBottom="24dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_record"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            app:cardCornerRadius="24dp"
+            app:cardBackgroundColor="@color/zen_surface"
+            app:strokeColor="@color/zen_accent"
+            app:strokeWidth="1dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_record_icon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/ic_mic_24"
+                    app:tint="@color/zen_accent"
+                    android:importantForAccessibility="no"/>
+
+                <TextView
+                    android:id="@+id/tv_record_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/record_audio"
+                    android:textColor="@color/zen_accent"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+                
+                <TextView
+                    android:id="@+id/tv_record_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/tap_to_start"
+                    android:textColor="#AAAAAA"
+                    android:textSize="14sp"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_pause"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"
+            app:cardCornerRadius="24dp"
+            app:cardBackgroundColor="@color/zen_surface"
+            app:strokeColor="@color/zen_surface"
+            app:strokeWidth="1dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_pause_icon"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/ic_pause_24"
+                    app:tint="@android:color/white"
+                    android:importantForAccessibility="no"/>
+
+                <TextView
+                    android:id="@+id/tv_pause_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/pause_recording"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+    <!-- Write Note Row -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_write"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="48dp"
+        app:cardCornerRadius="24dp"
+        app:cardBackgroundColor="#202020"
+        app:strokeColor="@color/zen_surface"
+        app:strokeWidth="1dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:importantForAccessibility="yes"
+        android:accessibilityTraversalAfter="@id/layout_media_controls"
+        android:foreground="?attr/selectableItemBackground">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_edit_24"
+                app:tint="@android:color/white"
+                android:importantForAccessibility="no"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/write_note"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
