@@ -60,6 +60,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         
+        // Onboarding Check
+        val preferenceManager = com.shuvostechworld.sonicmemories.utils.PreferenceManager(this)
+        if (preferenceManager.isFirstRun) {
+            startActivity(android.content.Intent(this, com.shuvostechworld.sonicmemories.ui.onboarding.OnboardingActivity::class.java))
+            finish()
+            return
+        }
+        
         // Biometric Unlock
         val prefs = android.content.Context.MODE_PRIVATE.let { getSharedPreferences("sonic_prefs", it) }
         val isBiometricEnabled = prefs.getBoolean("biometric_enabled", true)

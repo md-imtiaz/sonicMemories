@@ -44,6 +44,7 @@ class SettingsActivity : AppCompatActivity() {
         
         prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
+        createNotificationChannel()
         setupUI()
         setupListeners()
     }
@@ -88,8 +89,17 @@ class SettingsActivity : AppCompatActivity() {
             editor.apply()
 
             if (isChecked) {
-                scheduleAlarm()
-                AccessibilityUtils.announceToScreenReader(binding.root, "Daily reminder enabled")
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                     if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                         requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1002)
+                     } else {
+                         scheduleAlarm()
+                         AccessibilityUtils.announceToScreenReader(binding.root, "Daily reminder enabled")
+                     }
+                } else {
+                    scheduleAlarm()
+                    AccessibilityUtils.announceToScreenReader(binding.root, "Daily reminder enabled")
+                }
             } else {
                 cancelAlarm()
                 AccessibilityUtils.announceToScreenReader(binding.root, "Daily reminder disabled")
@@ -120,6 +130,45 @@ class SettingsActivity : AppCompatActivity() {
         
         binding.btnDeleteAll.setOnClickListener {
             showDeleteConfirmation()
+        }
+        
+        binding.btnContact.setOnClickListener {
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = android.net.Uri.parse("mailto:${getString(com.shuvostechworld.sonicmemories.R.string.contact_email)}")
+                putExtra(Intent.EXTRA_SUBJECT, "SonicMemories Support")
+            }
+            try {
+                startActivity(Intent.createChooser(intent, "Send Email"))
+            } catch (e: Exception) {
+                Toast.makeText(this, "No email app found", Toast.LENGTH_SHORT).show()
+            }
+        }
+        
+        // WhatsApp Listener
+        binding.root.findViewById<android.view.View>(com.shuvostechworld.sonicmemories.R.id.btn_whatsapp)?.setOnClickListener {
+             openUrl(getString(com.shuvostechworld.sonicmemories.R.string.whatsapp_url))
+        }
+        
+        binding.btnWebsite.setOnClickListener {
+            openUrl(getString(com.shuvostechworld.sonicmemories.R.string.website_url))
+        }
+        
+        binding.root.findViewById<android.view.View>(com.shuvostechworld.sonicmemories.R.id.btn_tutorial)?.setOnClickListener {
+            startActivity(Intent(this, com.shuvostechworld.sonicmemories.ui.onboarding.OnboardingActivity::class.java))
+        }
+        
+        binding.btnPrivacy.setOnClickListener {
+             // Assuming privacy policy is at /privacy or similar
+             openUrl(getString(com.shuvostechworld.sonicmemories.R.string.website_url) + "/privacy")
+        }
+    }
+    
+    private fun openUrl(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url))
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "No browser found", Toast.LENGTH_SHORT).show()
         }
     }
     
@@ -244,5 +293,33 @@ class SettingsActivity : AppCompatActivity() {
         }
         
         startActivity(Intent.createChooser(intent, "Export Memories"))
+    }
+    private fun createNotificationChannel() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val name = "Daily Reflection"
+            val descriptionText = "Reminders to record your daily memory"
+            val importance = android.app.NotificationManager.IMPORTANCE_DEFAULT
+            val channel = android.app.NotificationChannel("sonic_daily_reminder", name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: android.app.NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1002) {
+             if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                 // Permission granted, schedule alarm if switch is on
+                 if (binding.switchReminder.isChecked) {
+                     scheduleAlarm()
+                 }
+             } else {
+                 Toast.makeText(this, "Notifications permission denied", Toast.LENGTH_SHORT).show()
+                 binding.switchReminder.isChecked = false
+             }
+        }
     }
 }

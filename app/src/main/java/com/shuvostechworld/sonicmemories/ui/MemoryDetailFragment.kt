@@ -425,8 +425,6 @@ class MemoryDetailFragment : Fragment() {
 
         viewModel.saveEntry(entryToSave, recordedFile)
         
-        viewModel.saveEntry(entryToSave, recordedFile)
-        
         findNavController().popBackStack()
     }
 

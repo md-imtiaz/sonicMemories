@@ -80,6 +80,21 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
         }
     }
     
+    // Location Permission Launcher
+    private val locationPermissionLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val fineGranted = permissions[android.Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        val coarseGranted = permissions[android.Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+        
+        if (fineGranted || coarseGranted) {
+             fetchLocationInternal()
+        } else {
+             binding.tvLocationText.text = "Permission denied"
+             AccessibilityUtils.announceToScreenReader(binding.tvLocationText, "Location permission denied.")
+        }
+    }
+    
     private var pendingVoiceInputEditText: com.google.android.material.textfield.TextInputEditText? = null
     
     private fun onVoiceInputResult(text: String) {
@@ -100,6 +115,20 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun fetchLocation() {
+        if (androidx.core.content.ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED ||
+            androidx.core.content.ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            fetchLocationInternal()
+        } else {
+            // Request permissions
+            locationPermissionLauncher.launch(arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ))
+        }
+    }
+
+    private fun fetchLocationInternal() {
         // Show fetching state
         binding.tvLocationText.text = "Fetching location..."
         binding.layoutLocationContainer.contentDescription = "Fetching location..."
@@ -241,7 +270,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
                 if (shouldPlay) {
                     val url = soundItem.previews?.previewHqMp3
                     if (url != null) {
-                        ambientSoundManager.playLooping(url)
+                        ambientSoundManager.playLooping(url, null)
                         ambientAdapter.updatePlayingState(soundItem.id)
                     }
                 } else {
@@ -384,17 +413,22 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
                     val file = File(path)
                     if (file.exists()) {
                         // Play Ambient if selected
-                        selectedAmbientSoundUrl?.let { url ->
-                            ambientSoundManager.playLooping(url)
-                        }
-
-                        // Play Voice
-                        audioPlayer.playFile(path) {
-                            Handler(Looper.getMainLooper()).post {
-                                updatePlayPauseIcon(false)
-                                ambientSoundManager.stop() // Stop ambient when voice ends
+                        val startVoice = {
+                            // Play Voice
+                            audioPlayer.playFile(path) {
+                                Handler(Looper.getMainLooper()).post {
+                                    updatePlayPauseIcon(false)
+                                    ambientSoundManager.stop() // Stop ambient when voice ends
+                                }
                             }
                         }
+
+                        if (selectedAmbientSoundUrl != null) {
+                            ambientSoundManager.playLooping(selectedAmbientSoundUrl!!, startVoice)
+                        } else {
+                            startVoice()
+                        }
+
                         updatePlayPauseIcon(true)
                     } else {
                         android.widget.Toast.makeText(requireContext(), getString(com.shuvostechworld.sonicmemories.R.string.error_file_not_found), android.widget.Toast.LENGTH_SHORT).show()

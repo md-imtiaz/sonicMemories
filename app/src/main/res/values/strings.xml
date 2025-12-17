@@ -43,4 +43,47 @@
     <string name="recording_resumed">Recording Resumed</string>
     <string name="stop_first_hint">Stop recording first to write a note</string>
     <string name="stop_first_accessibility">Stop recording first</string>
+    
+    <string name="about_title">About</string>
+    <string name="app_description">SonicMemories helps you capture the essence of your moments through sound. Record your thoughts, the ambient world around you, and relive them anytime.</string>
+    <string name="company_label">Company</string>
+    <string name="developer_name">Shuvos Tech World</string>
+    <string name="developer_name_desc">Developed by Shuvos Tech World</string>
+    <string name="contact_label">Contact Support</string>
+    <string name="contact_email">contact@shuvostechworld.com</string>
+    <string name="whatsapp_label">Join our WhatsApp Group</string>
+    <string name="whatsapp_url">https://chat.whatsapp.com/placeholder</string>
+    <string name="website_label">Visit Website</string>
+    <string name="website_url">https://www.shuvostechworld.com</string>
+    <string name="version_label">Version</string>
+    <string name="version_text">1.0.0</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    
+    <!-- Extracted Strings -->
+    <string name="audio_memory">Audio Memory</string>
+    <string name="location_label">Location</string>
+    <string name="audio_recording">Audio Recording</string>
+    <string name="play">Play</string>
+    <string name="today">Today</string>
+    <string name="record_memory">Record Memory</string>
+    <string name="tap_to_play">Tap to play</string>
+    <string name="fast_dictation">Fast Dictation</string>
+    <string name="save_to_sonic_memories">Save to Sonic Memories</string>
+    <string name="memory_title_placeholder">Memory Title</string>
+    <string name="listen_now">LISTEN NOW</string>
+    <string name="no_memories">No memories yet</string>
+    <string name="empty_state_hint">Tap Record to start your sonic journey</string>
+    <string name="app_title_formatted">Sonic\nMemories</string>
+    <string name="unlock_diary">Unlock Diary</string>
+    <string name="settings_title">Settings</string>
+    <string name="daily_reflection">Daily Reflection</string>
+    <string name="daily_reminder">Daily Reminder</string>
+    <string name="daily_reminder_desc">Get notified to record your memories</string>
+    <string name="time_label">Time</string>
+    <string name="security_title">Security</string>
+    <string name="biometric_lock">Biometric Lock</string>
+    <string name="biometric_desc">Require fingerprint to open app</string>
+    <string name="data_management">Data Management</string>
+    <string name="export_json">Export Memories to JSON</string>
+    <string name="delete_all">Delete All Memories</string>
 </resources>

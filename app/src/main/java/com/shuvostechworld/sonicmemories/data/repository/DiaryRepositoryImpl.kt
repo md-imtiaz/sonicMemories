@@ -70,14 +70,7 @@ class DiaryRepositoryImpl @Inject constructor(
     override fun getAllEntries(): Flow<List<DiaryEntry>> = callbackFlow {
         val user = auth.currentUser
         if (user == null) {
-            // Instead of crashing, we can close with a specific message or just return empty.
-            // But since the ViewModel now handles exceptions, throwing is "okay" but aggressive.
-            // Let's keep the exception but ensure it's handled, OR return empty which is safer for startup.
-            // Returning empty list implies "no data", which is technically true for "no user".
-            // However, debugging is harder. I will assume ViewModel handles it now.
-            // But to be extra safe against crashes:
-            // Gracefully handle unauthenticated state to prevent crashes
-            close() 
+            close(Exception("User not authenticated"))
             return@callbackFlow
         }
 
@@ -91,8 +84,14 @@ class DiaryRepositoryImpl @Inject constructor(
                 }
 
                 if (snapshot != null) {
-                    val entries = snapshot.toObjects(DiaryEntry::class.java)
-                    trySend(entries)
+                    try {
+                        val entries = snapshot.toObjects(DiaryEntry::class.java)
+                        trySend(entries)
+                    } catch (e: Exception) {
+                        // If deserialization fails, we don't want to crash the whole flow usually,
+                        // but for now, logging or closing with error is improving safety.
+                        close(e)
+                    }
                 }
             }
 

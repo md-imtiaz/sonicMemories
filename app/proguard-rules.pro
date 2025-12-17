@@ -1,21 +1,34 @@
 # Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Android Components
+-keep class androidx.appcompat.widget.** { *; }
+-keep class com.google.android.material.** { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Retrofit
+-keepattributes Signature
+-keepattributes Exceptions
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Gson
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
+-keep class com.shuvostechworld.sonicmemories.data.remote.** { *; }
+-keep class com.shuvostechworld.sonicmemories.data.model.** { *; }
+
+# Hilt
+-keep class com.shuvostechworld.sonicmemories.SonicMemoriesApp_HiltComponents { *; }
+-keep class dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper$1
+-keep class dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper$1 { *; }
+
+# Coroutines
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+-keepclassmembers class kotlinx.coroutines.android.AndroidExceptionPreHandler {
+    <init>();
+}
+
+# Preserve Line Numbers for Crash Reports
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile

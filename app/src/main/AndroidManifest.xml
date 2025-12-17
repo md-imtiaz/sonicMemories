@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".SonicMemoriesApp"
@@ -39,6 +40,10 @@
         <receiver android:name=".receiver.ReminderReceiver"
             android:enabled="true"
             android:exported="false"/>
+            
+        <activity
+            android:name=".ui.onboarding.OnboardingActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
