@@ -33,7 +33,7 @@ class SettingsActivity : AppCompatActivity() {
         private const val KEY_REMINDER_ENABLED = "reminder_enabled"
         private const val KEY_REMINDER_HOUR = "reminder_hour"
         private const val KEY_REMINDER_MINUTE = "reminder_minute"
-        private const val REMOTE_CONFIG_BIOMETRIC_KEY = "biometric_enabled" // Using same key as typically used
+        private const val REMOTE_CONFIG_BIOMETRIC_KEY = "biometric_enabled" 
         private const val REQUEST_CODE_ALARM = 1001
     }
 
@@ -50,9 +50,9 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // Load prefs
+        
         val isEnabled = prefs.getBoolean(KEY_REMINDER_ENABLED, false)
-        val hour = prefs.getInt(KEY_REMINDER_HOUR, 20) // Default 8 PM
+        val hour = prefs.getInt(KEY_REMINDER_HOUR, 20) 
         val minute = prefs.getInt(KEY_REMINDER_MINUTE, 0)
 
         binding.switchReminder.isChecked = isEnabled
@@ -61,9 +61,9 @@ class SettingsActivity : AppCompatActivity() {
         binding.layoutTimePicker.alpha = if (isEnabled) 1.0f else 0.5f
         binding.layoutTimePicker.isEnabled = isEnabled
         
-        binding.switchBiometric.isChecked = prefs.getBoolean("biometric_enabled", true) // Default true as per MainActivity behavior?
-        // Actually MainActivity defaults to enforcing it if code is there.
-        // Let's assume we want to honor this setting in MainActivity.
+        binding.switchBiometric.isChecked = prefs.getBoolean("biometric_enabled", true) 
+        
+        
     }
 
     private fun updateTimeText(hour: Int, minute: Int) {
@@ -144,7 +144,7 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
         
-        // WhatsApp Listener
+        
         binding.root.findViewById<android.view.View>(com.shuvostechworld.sonicmemories.R.id.btn_whatsapp)?.setOnClickListener {
              openUrl(getString(com.shuvostechworld.sonicmemories.R.string.whatsapp_url))
         }
@@ -158,7 +158,7 @@ class SettingsActivity : AppCompatActivity() {
         }
         
         binding.btnPrivacy.setOnClickListener {
-             // Assuming privacy policy is at /privacy or similar
+             
              openUrl(getString(com.shuvostechworld.sonicmemories.R.string.website_url) + "/privacy")
         }
     }
@@ -195,7 +195,7 @@ class SettingsActivity : AppCompatActivity() {
             editor.apply()
             
             updateTimeText(hourOfDay, minute)
-            scheduleAlarm() // Reschedule with new time
+            scheduleAlarm() 
             
         }, currentHour, currentMinute, false)
         
@@ -207,13 +207,13 @@ class SettingsActivity : AppCompatActivity() {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             if (!alarmManager.canScheduleExactAlarms()) {
-                // Request permission
+                
                 val intent = Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
                 intent.data = android.net.Uri.parse("package:$packageName")
                 startActivity(intent)
                 Toast.makeText(this, "Please allow exact alarms for reminders", Toast.LENGTH_LONG).show()
-                // Reset switch until granted? Or leave it and let user retry. 
-                // Better UX: Leave switch, but warn. For now, just opening settings is clear enough.
+                
+                
                 binding.switchReminder.isChecked = false
                 return
             }
@@ -233,7 +233,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val intent = Intent(this, ReminderReceiver::class.java)
-        // Use FLAG_IMMUTABLE for API 31+
+        
         val pendingIntent = PendingIntent.getBroadcast(
             this, 
             REQUEST_CODE_ALARM, 
@@ -241,7 +241,7 @@ class SettingsActivity : AppCompatActivity() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Use setExactAndAllowWhileIdle for reliable reminders
+        
         try {
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
@@ -312,7 +312,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1002) {
              if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                 // Permission granted, schedule alarm if switch is on
+                 
                  if (binding.switchReminder.isChecked) {
                      scheduleAlarm()
                  }

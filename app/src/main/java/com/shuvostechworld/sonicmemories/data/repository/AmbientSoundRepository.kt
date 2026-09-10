@@ -16,7 +16,7 @@ class AmbientSoundRepository @Inject constructor() {
             .create(FreesoundApiService::class.java)
     }
 
-    // TODO: Move this to local.properties or Secrets.kt
+    
     private val API_KEY = "AQWkpxVRwUr7bFki6atph6sgZGKtWaTGLqYOchyZ"
 
     suspend fun fetchSounds(query: String): List<SoundItem>? {

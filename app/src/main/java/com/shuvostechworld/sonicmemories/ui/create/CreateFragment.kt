@@ -29,7 +29,7 @@ class CreateFragment : Fragment() {
     private lateinit var soundManager: com.shuvostechworld.sonicmemories.utils.SoundManager
     private var isActionProcessing = false
 
-    // Request Permission logic moved here
+    
     private val requestPermissionLauncher =
         registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -55,7 +55,7 @@ class CreateFragment : Fragment() {
         try {
             soundManager = com.shuvostechworld.sonicmemories.utils.SoundManager(requireContext())
         } catch (e: Exception) {
-            // Handle error
+            
         }
 
         setupListeners()
@@ -181,17 +181,17 @@ class CreateFragment : Fragment() {
                 
                 runPulseAnimation()
                 
-                // Keep enabled for accessibility discovery
+                
                 binding.cardWrite.alpha = 0.5f 
             }
             DiaryViewModel.RecordingState.Paused -> {
                 binding.tvRecordStatus.text = "Stop Recording"
                 binding.tvRecordHint.text = getString(R.string.recording_paused)
-                // Stop button remains Red/Stop
+                
                 
                 binding.cardPause.visibility = View.VISIBLE
                 binding.tvPauseLabel.text = getString(R.string.resume_recording)
-                binding.ivPauseIcon.setImageResource(android.R.drawable.ic_media_play) // Reuse play icon for resume
+                binding.ivPauseIcon.setImageResource(android.R.drawable.ic_media_play) 
                 
                 binding.cardRecord.animate().cancel()
                 binding.cardRecord.scaleX = 1.0f
@@ -221,12 +221,12 @@ class CreateFragment : Fragment() {
             val mood = bundle.getInt(com.shuvostechworld.sonicmemories.ui.dialog.ReviewBottomSheet.RESULT_MOOD, 5)
             val ambientUrl = bundle.getString(com.shuvostechworld.sonicmemories.ui.dialog.ReviewBottomSheet.RESULT_AMBIENT_SOUND_URL)
             val tagsList = bundle.getStringArrayList(com.shuvostechworld.sonicmemories.ui.dialog.ReviewBottomSheet.RESULT_TAGS)
-            val lat = bundle.getDouble(com.shuvostechworld.sonicmemories.ui.dialog.ReviewBottomSheet.RESULT_LATITUDE) // returns 0.0 if default, handled manually check
+            val lat = bundle.getDouble(com.shuvostechworld.sonicmemories.ui.dialog.ReviewBottomSheet.RESULT_LATITUDE) 
             val lng = bundle.getDouble(com.shuvostechworld.sonicmemories.ui.dialog.ReviewBottomSheet.RESULT_LONGITUDE)
-            // check bundle existence keys first or just accept 0.0 if valid range
+            
             val address = bundle.getString(com.shuvostechworld.sonicmemories.ui.dialog.ReviewBottomSheet.RESULT_ADDRESS)
             
-            // Handle primitives defaults
+            
             val hasLat = bundle.containsKey(com.shuvostechworld.sonicmemories.ui.dialog.ReviewBottomSheet.RESULT_LATITUDE)
             val finalLat = if (hasLat) lat else null
             val finalLng = if (hasLat) lng else null

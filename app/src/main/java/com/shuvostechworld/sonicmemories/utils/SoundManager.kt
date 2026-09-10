@@ -20,7 +20,7 @@ class SoundManager(private val context: Context) {
 
     fun playSound(resourceId: Int, fallbackTone: Int = ToneGenerator.TONE_PROP_BEEP) {
         try {
-            // Try to play the resource file
+            
             val mediaPlayer = MediaPlayer.create(context, resourceId)
             if (mediaPlayer != null) {
                 mediaPlayer.setOnCompletionListener {
@@ -28,7 +28,7 @@ class SoundManager(private val context: Context) {
                 }
                 mediaPlayer.start()
             } else {
-                // If creation fails (e.g. resource not found/invalid), use fallback
+                
                 playFallback(fallbackTone)
             }
         } catch (e: Exception) {
@@ -39,7 +39,7 @@ class SoundManager(private val context: Context) {
 
     private fun playFallback(toneType: Int) {
         try {
-            toneGenerator?.startTone(toneType, 150) // Play for 150ms
+            toneGenerator?.startTone(toneType, 150) 
         } catch (e: Exception) {
             Log.e("SoundManager", "Error playing fallback tone", e)
         }
@@ -51,7 +51,7 @@ class SoundManager(private val context: Context) {
     }
 
     companion object {
-        // Define tone constants for easy mapping if we want specific beeps for different actions
+        
         const val TONE_START = ToneGenerator.TONE_SUP_PIP
         const val TONE_STOP = ToneGenerator.TONE_SUP_PIP
         const val TONE_PAUSE = ToneGenerator.TONE_PROP_PROMPT

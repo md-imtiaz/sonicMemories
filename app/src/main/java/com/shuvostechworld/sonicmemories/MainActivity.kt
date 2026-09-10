@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Auth Check
+        
         try {
             if (com.google.firebase.FirebaseApp.getApps(this).isEmpty()) {
                  com.google.firebase.FirebaseApp.initializeApp(this)
@@ -60,7 +60,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         
-        // Onboarding Check
         val preferenceManager = com.shuvostechworld.sonicmemories.utils.PreferenceManager(this)
         if (preferenceManager.isFirstRun) {
             startActivity(android.content.Intent(this, com.shuvostechworld.sonicmemories.ui.onboarding.OnboardingActivity::class.java))
@@ -68,7 +67,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
         
-        // Biometric Unlock
         val prefs = android.content.Context.MODE_PRIVATE.let { getSharedPreferences("sonic_prefs", it) }
         val isBiometricEnabled = prefs.getBoolean("biometric_enabled", true)
         
@@ -78,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             binding.btnUnlock.setOnClickListener { authenticateUser() }
         } else {
              binding.layoutLockScreen.visibility = android.view.View.GONE
-             viewModel.loadEntries() // Can load early if unlocked
+             viewModel.loadEntries() 
         }
         
         setupNavigation()

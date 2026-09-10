@@ -50,14 +50,14 @@ class AmbientSoundAdapter(
         fun bind(item: SoundItem, isPlaying: Boolean, isSelected: Boolean) {
             binding.tvSoundName.text = item.name
             
-            // Play/Pause Icon State
+            
             if (isPlaying) {
                 binding.ivIcon.setImageResource(android.R.drawable.ic_media_pause)
             } else {
                 binding.ivIcon.setImageResource(android.R.drawable.ic_media_play)
             }
 
-            // Added/Selected State
+            
             if (isSelected) {
                 binding.ivCheck.visibility = android.view.View.VISIBLE
                 binding.btnAdd.visibility = android.view.View.GONE
@@ -68,12 +68,12 @@ class AmbientSoundAdapter(
                 binding.cardSoundItem.strokeWidth = 0
             }
             
-            // Click Listeners
+            
             binding.root.setOnClickListener {
                 if (isPlaying) {
-                    onPreviewClick(item, false) // Stop
+                    onPreviewClick(item, false) 
                 } else {
-                    onPreviewClick(item, true) // Play
+                    onPreviewClick(item, true) 
                 }
             }
             

@@ -21,7 +21,7 @@ class AudioPlayer @Inject constructor(
     private var onCompletionVerifier: (() -> Unit)? = null
 
     fun playFile(pathOrUrl: String, onCompletion: () -> Unit) {
-        stop() // Stop any previous playback
+        stop() 
         
         onCompletionVerifier = onCompletion
         
@@ -33,12 +33,12 @@ class AudioPlayer @Inject constructor(
                     .build()
             )
             try {
-                reset() // Crucial for re-use state
+                reset() 
                 Log.d("AudioPlayer", "Attempting to play: $pathOrUrl")
 
                 val file = java.io.File(pathOrUrl)
                 if (file.exists() && file.isFile) {
-                   // Using path directly is often more robust than FD management for MediaPlayer
+                   
                    setDataSource(file.absolutePath)
                 } else {
                    setDataSource(pathOrUrl) 
@@ -65,7 +65,7 @@ class AudioPlayer @Inject constructor(
             } catch (e: Exception) {
                 Log.e("AudioPlayer", "Exception playing file", e)
                 e.printStackTrace()
-                onCompletionVerifier?.invoke() // Reset UI on error
+                onCompletionVerifier?.invoke() 
             }
         }
     }

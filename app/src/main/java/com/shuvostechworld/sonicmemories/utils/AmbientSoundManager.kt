@@ -22,7 +22,7 @@ class AmbientSoundManager @Inject constructor() {
                 reset()
                 setDataSource(url)
                 isLooping = true
-                setVolume(1.0f, 1.0f) // Increased volume for audibility
+                setVolume(1.0f, 1.0f) 
                 setOnPreparedListener {
                     start()
                     android.util.Log.d("AmbientSoundManager", "Started playing from 0")
@@ -30,7 +30,7 @@ class AmbientSoundManager @Inject constructor() {
                 }
                 setOnErrorListener { _, what, extra ->
                     android.util.Log.e("AmbientSoundManager", "Error playing ambient: $what, $extra")
-                    onStart?.invoke() // Fallback: allow flow to continue even if ambient fails
+                    onStart?.invoke() 
                     true
                 }
                 prepareAsync()

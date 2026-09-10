@@ -32,11 +32,11 @@ class MemoryDetailFragment : Fragment() {
 
     private val viewModel: DiaryViewModel by activityViewModels()
     
-    // If null, we are in Create Mode. If set, Edit Mode.
+    
     private var currentEntryId: String? = null
     private var currentEntry: DiaryEntry? = null
     
-    // Recording
+    
     private var recordedFile: java.io.File? = null
     private var isRecording = false
     private val selectedTags = mutableListOf<String>()
@@ -88,7 +88,7 @@ class MemoryDetailFragment : Fragment() {
         if (currentEntryId == null) {
             setupCreateMode()
         } else {
-            // Data will be loaded in observeData
+            
         }
 
         binding.fabSave.setOnClickListener {
@@ -168,7 +168,7 @@ class MemoryDetailFragment : Fragment() {
             try {
                 speechRecognizer?.startListening(intent)
                 binding.btnDictate.text = "Listening..."
-                binding.btnDictate.setIconResource(R.drawable.ic_mic_24) // pulse/change icon if needed
+                binding.btnDictate.setIconResource(R.drawable.ic_mic_24) 
                 binding.btnDictate.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), android.R.color.holo_red_light))
             } catch (e: Exception) {
                 Toast.makeText(context, "Dictation failed to start", Toast.LENGTH_SHORT).show()
@@ -197,7 +197,7 @@ class MemoryDetailFragment : Fragment() {
                         SpeechRecognizer.ERROR_NETWORK -> "Network error"
                         else -> "Error: $error"
                     }
-                    if (error != SpeechRecognizer.ERROR_NO_MATCH) { // no match is common if silent
+                    if (error != SpeechRecognizer.ERROR_NO_MATCH) { 
                          Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -211,9 +211,9 @@ class MemoryDetailFragment : Fragment() {
                 }
 
                 override fun onPartialResults(partialResults: Bundle?) {
-                    // Optional: Update UI with live text? For now just wait for final
-                    // Implementing partials requires complex EditText handling to avoid duplicating.
-                    // Let's stick to final results for stability.
+                    
+                    
+                    
                 }
 
                 override fun onEvent(eventType: Int, params: Bundle?) {}
@@ -245,10 +245,10 @@ class MemoryDetailFragment : Fragment() {
             if (file != null) {
                 recordedFile = file
                 Toast.makeText(context, "Recording saved temporarily", Toast.LENGTH_SHORT).show()
-                // Show player? maybe not until saved, but visualizer stops
+                
             }
         } else {
-            // Check permission
+            
             if (androidx.core.content.ContextCompat.checkSelfPermission(
                     requireContext(),
                     android.Manifest.permission.RECORD_AUDIO
@@ -265,15 +265,15 @@ class MemoryDetailFragment : Fragment() {
         val dateFormat = SimpleDateFormat("EEE, dd MMM yyyy, hh:mm a", Locale.getDefault())
         binding.tvDate.text = dateFormat.format(Date())
         binding.cardAudioPlayer.visibility = View.GONE
-        binding.etTitle.setText("") // Ensure empty
-        binding.etContent.setText("") // Ensure empty
+        binding.etTitle.setText("") 
+        binding.etContent.setText("") 
         binding.etTitle.requestFocus()
     }
 
 
     
     private fun observeData() {
-        // Load Entry if ID exists
+        
         if (currentEntryId != null) {
             viewLifecycleOwner.lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -282,7 +282,7 @@ class MemoryDetailFragment : Fragment() {
                             currentEntry = entry
                             populateUi(entry)
                         } else {
-                            // Entry not found or deleted
+                            
                             Toast.makeText(context, "Memory not found", Toast.LENGTH_SHORT).show()
                             Toast.makeText(context, "Memory not found", Toast.LENGTH_SHORT).show()
                             findNavController().popBackStack()
@@ -292,7 +292,7 @@ class MemoryDetailFragment : Fragment() {
             }
         }
 
-        // Observe Playing State
+        
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.currentPlayingId.collect { playingId ->
@@ -301,7 +301,7 @@ class MemoryDetailFragment : Fragment() {
             }
         }
         
-        // Observe Recording State
+        
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.recordingState.collect { state ->
@@ -331,7 +331,7 @@ class MemoryDetailFragment : Fragment() {
                 binding.btnRecord.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.holo_red_light)
                 
                 binding.waveformView.visibility = View.GONE
-                // Don't auto-show player yet unless we link recordedFile to player preview, but let's keep simple
+                
             }
             else -> {}
         }
@@ -348,11 +348,11 @@ class MemoryDetailFragment : Fragment() {
     }
 
     private fun populateUi(entry: DiaryEntry) {
-        // Only populate if fields are empty to avoid overwriting user edits during updates
-        // BUT, getEntryById is a flow. If it updates locally, we might overwrite.
-        // It's safer to populate once or check if text matches.
-        // For simplicity: Populate ONLY if binding.etTitle.text is empty (first load).
-        // This is a naive approach but prevents typing glitches if Flow re-emits.
+        
+        
+        
+        
+        
         
         if (binding.etTitle.text.toString().isEmpty()) {
             binding.etTitle.setText(entry.title)
@@ -361,7 +361,7 @@ class MemoryDetailFragment : Fragment() {
             binding.etContent.setText(entry.content)
         }
         
-        // Tags
+        
         binding.chipGroupTags.removeAllViews()
         selectedTags.clear()
         selectedTags.addAll(entry.tags)
@@ -378,8 +378,8 @@ class MemoryDetailFragment : Fragment() {
             binding.cardAudioPlayer.visibility = View.GONE
         }
         
-        // Hide record button if audio already exists? Or allow overwrite? 
-        // For now, if audio exists, hide record button to prevent accidental overwrite without delete
+        
+        
         if (entry.audioUrl.isNotEmpty()) {
              binding.btnRecord.visibility = View.GONE
         }
@@ -406,15 +406,15 @@ class MemoryDetailFragment : Fragment() {
         }
 
         val entryToSave = if (currentEntry != null) {
-            // Update existing
+            
             currentEntry!!.copy(
                 title = title,
                 content = content,
                 tags = selectedTags.toList()
-                // Keep ID, AudioUrl, Mood, Timestamp
+                
             )
         } else {
-            // Create new
+            
             DiaryEntry(
                 title = title,
                 content = content,

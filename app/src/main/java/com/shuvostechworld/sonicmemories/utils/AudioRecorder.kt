@@ -13,14 +13,14 @@ class AudioRecorder @Inject constructor() {
     private var recorder: MediaRecorder? = null
 
     fun startRecording(context: Context, outputFile: File) {
-        stopRecording() // Release any existing recorder
+        stopRecording() 
         createRecorder(context).apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             setAudioEncodingBitRate(128000)
             setAudioSamplingRate(44100)
-            // Use defaults for best compatibility
+            
             setOutputFile(outputFile.absolutePath)
             
             prepare()
@@ -55,9 +55,9 @@ class AudioRecorder @Inject constructor() {
             try {
                 stop()
             } catch (e: RuntimeException) {
-                // RuntimeException is thrown if stop() is called immediately after start()
-                // or if there was an error during recording. We can safely ignore this
-                // as we are resetting anyway.
+                
+                
+                
                 e.printStackTrace()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -73,7 +73,7 @@ class AudioRecorder @Inject constructor() {
         recorder = null
     }
     
-    // Helper to create recorder based on API level
+    
     private fun createRecorder(context: Context): MediaRecorder {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MediaRecorder(context)

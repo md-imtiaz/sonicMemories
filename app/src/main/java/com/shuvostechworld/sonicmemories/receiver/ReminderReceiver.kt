@@ -35,7 +35,7 @@ class ReminderReceiver : BroadcastReceiver() {
         )
 
         val builder = androidx.core.app.NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher) // Fallback to launcher if specific icon not ready
+            .setSmallIcon(R.mipmap.ic_launcher) 
             .setContentTitle("Time to Reflect")
             .setContentText("Record your daily memory now!")
             .setPriority(androidx.core.app.NotificationCompat.PRIORITY_DEFAULT)

@@ -31,10 +31,10 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     
-    // Use activityViewModels to share data with Activity and other fragments
+    
     private val viewModel: DiaryViewModel by activityViewModels()
     
-    // Reuse adapter
+    
     private lateinit var adapter: DiaryAdapter
 
     override fun onCreateView(
@@ -54,18 +54,18 @@ class HomeFragment : Fragment() {
         observeTags()
     }
     
-    // setupRecordingFabs removed
-    // handleMainFabClick removed
-    // checkPermissionAndStartRecording removed
-    // startRecording removed
-    // stopRecording removed
-    // observeRecordingState removed
-    // updateUiForState removed
-    // runPulseAnimation removed
-    // setupReviewResultListener removed (handled in CreateFragment now) – 
-    // Wait, if we edit existing? No, Home is list. Create is for new. OK.
     
-    // ... setupRecyclerView ...
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     private fun setupRecyclerView() {
         adapter = DiaryAdapter(
@@ -73,7 +73,7 @@ class HomeFragment : Fragment() {
                 viewModel.playMemory(entry)
             },
             onItemClick = { entry ->
-                 // Navigate to Detail
+                 
                  val bundle = Bundle().apply { putString("entry_id", entry.id) }
                  findNavController().navigate(R.id.navigation_memory_detail, bundle)
             },
@@ -88,7 +88,7 @@ class HomeFragment : Fragment() {
 
         binding.recyclerView.adapter = adapter
         
-        // Swipe to Delete
+        
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(r: RecyclerView, v: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder) = false
 
@@ -106,7 +106,7 @@ class HomeFragment : Fragment() {
                             viewModel.restoreEntry(entry)
                         }.show()
                 } else {
-                    // Header swiped? Reset.
+                    
                     adapter.notifyItemChanged(position)
                 }
             }
@@ -114,7 +114,7 @@ class HomeFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
     }
     
-    // ... observeUiState, observeTags ... 
+    
 
     private fun observeUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -122,7 +122,7 @@ class HomeFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is UiState.Loading -> {
-                            // Show loading?
+                            
                         }
                         is UiState.Success -> {
                             val filtered = if (viewModel.activeDates.value.isNotEmpty() && viewModel.selectedDate.value != null) {
@@ -147,7 +147,7 @@ class HomeFragment : Fragment() {
                             Snackbar.make(binding.root, state.message, Snackbar.LENGTH_LONG).show()
                         }
                         is UiState.Idle -> {
-                             // Do nothing
+                             
                         }
                     }
                 }
@@ -158,7 +158,7 @@ class HomeFragment : Fragment() {
     private fun observeTags() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // ... (existing tag observation logic) ...
+                
                 viewModel.allTags.collect { tagsSet ->
                      val tagsList = tagsSet.toList().sorted()
                      val adapter = android.widget.ArrayAdapter<String>(requireContext(), android.R.layout.simple_dropdown_item_1line, tagsList)
@@ -169,7 +169,7 @@ class HomeFragment : Fragment() {
                          viewModel.selectTag(selectedTag)
                      }
                      
-                     // Adding "All Memories" and "On This Day"
+                     
                      val displayTags = listOf("All Memories", "📅 On This Day") + tagsList
                      val robustAdapter = android.widget.ArrayAdapter<String>(requireContext(), android.R.layout.simple_dropdown_item_1line, displayTags)
                      binding.autoCompleteFilter.setAdapter(robustAdapter)
@@ -186,7 +186,7 @@ class HomeFragment : Fragment() {
             }
         }
         
-        // Observe Flashback
+        
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.flashbackEntry.collect { entry ->
@@ -201,7 +201,7 @@ class HomeFragment : Fragment() {
                             viewModel.playMemory(entry)
                         }
                         
-                        // Accessibility Announce
+                        
                         binding.cardFlashback.contentDescription = "On This Day: ${binding.tvFlashbackTitle.text}, ${binding.tvFlashbackDate.text}. Double tap to listen."
                     } else {
                         binding.cardFlashback.visibility = View.GONE
@@ -229,7 +229,7 @@ class HomeFragment : Fragment() {
             }
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
-                // Refresh adapter to ensure item state is correct if needed (mainly for swipe, less for button)
+                
                 adapter.notifyDataSetChanged() 
             }
             .show()

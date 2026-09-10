@@ -18,18 +18,18 @@ object BiometricAuthManager {
         
         when (biometricManager.canAuthenticate(authenticators)) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
-                // Good to go
+                
             }
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE,
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE,
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                // If no security is available/setup, we bypass the lock (or could ask to setup)
-                // For this app's UX, we allow access to avoid "Brick" state.
+                
+                
                 onSuccess()
                 return
             }
             else -> {
-                // Other errors
+                
                 onError()
                 return
             }
@@ -45,15 +45,15 @@ object BiometricAuthManager {
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    // Errors like User Canceled, Lockout, etc.
+                    
                     onError()
                 }
 
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
-                    // Biometric is valid but not recognized (wrong finger etc.)
-                    // Usually we don't close the prompt here, just let them retry.
-                    // But we might want to notify UI if needed.
+                    
+                    
+                    
                 }
             })
 
@@ -63,8 +63,8 @@ object BiometricAuthManager {
             .setAllowedAuthenticators(authenticators)
             .build()
         
-        // Handle issues where device credential might not be available on older APIs or specific configs
-        // For simplicity following the Modern Android guideline
+        
+        
         
         biometricPrompt.authenticate(promptInfo)
     }

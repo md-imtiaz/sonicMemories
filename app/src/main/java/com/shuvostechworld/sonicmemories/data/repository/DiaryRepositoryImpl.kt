@@ -30,9 +30,9 @@ class DiaryRepositoryImpl @Inject constructor(
 
             var downloadUrl = entry.audioUrl
 
-            // 1. Upload Audio if provided
+            
             if (audioUri != null) {
-                // Parse extension or default to m4a (since we switched to m4a)
+                
                 val extension = when {
                     audioUri.toString().endsWith(".mp3") -> "mp3"
                     audioUri.toString().endsWith(".3gp") -> "3gp"
@@ -43,15 +43,15 @@ class DiaryRepositoryImpl @Inject constructor(
                 downloadUrl = audioRef.downloadUrl.await().toString()
             }
 
-            // 2. Save Entry to Firestore
-            // Use existing ID if available, otherwise generate new
+            
+            
             val documentId = if (entry.id.isNotEmpty()) entry.id else firestore.collection("diaries").document().id
             
             val finalEntry = entry.copy(
                 id = documentId,
                 userId = user.uid,
                 audioUrl = downloadUrl,
-                // Valid timestamp check logic could be here, but for now trusting input or current if 0
+                
                 timestamp = if (entry.timestamp == 0L) System.currentTimeMillis() else entry.timestamp
             )
 
@@ -88,8 +88,8 @@ class DiaryRepositoryImpl @Inject constructor(
                         val entries = snapshot.toObjects(DiaryEntry::class.java)
                         trySend(entries)
                     } catch (e: Exception) {
-                        // If deserialization fails, we don't want to crash the whole flow usually,
-                        // but for now, logging or closing with error is improving safety.
+                        
+                        
                         close(e)
                     }
                 }
@@ -100,17 +100,17 @@ class DiaryRepositoryImpl @Inject constructor(
 
     override fun deleteEntry(entry: DiaryEntry): Flow<Result<Boolean>> = flow {
         try {
-            // 1. Delete Audio from Storage
+            
             if (entry.audioUrl.isNotEmpty()) {
                 val storageRef = storage.getReferenceFromUrl(entry.audioUrl)
                 try {
                     storageRef.delete().await()
                 } catch (e: Exception) {
-                    // Log error but proceed to delete document
+                    
                 }
             }
 
-            // 2. Delete Document from Firestore
+            
             firestore.collection("diaries").document(entry.id).delete().await()
             emit(Result.success(true))
         } catch (e: Exception) {
@@ -127,7 +127,7 @@ class DiaryRepositoryImpl @Inject constructor(
                 return@flow
             }
             
-            // Query all documents for user
+            
             val snapshot = firestore.collection("diaries")
                 .whereEqualTo("userId", user.uid)
                 .get()
@@ -135,16 +135,16 @@ class DiaryRepositoryImpl @Inject constructor(
                 
             val batch = firestore.batch()
             
-            // Delete audio files (best effort)
+            
             snapshot.documents.forEach { doc ->
                 val audioUrl = doc.getString("audioUrl")
                 if (!audioUrl.isNullOrEmpty()) {
                     try {
                         storage.getReferenceFromUrl(audioUrl).delete()
-                        // Don't await individual deletes to speed up, or maybe we should?
-                        // Fire and forget for audio is risky but faster.
+                        
+                        
                     } catch (e: Exception) {
-                        // Ignore
+                        
                     }
                 }
                 batch.delete(doc.reference)

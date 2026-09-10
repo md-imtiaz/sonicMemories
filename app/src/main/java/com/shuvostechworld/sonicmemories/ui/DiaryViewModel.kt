@@ -76,7 +76,7 @@ class DiaryViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             try {
-                // Combine entries from repository with search query, selected date, AND selected tag
+                
                 combine(
                     repository.getAllEntries(),
                     _searchQuery,
@@ -84,14 +84,14 @@ class DiaryViewModel @Inject constructor(
                     _selectedTag
                 ) { entries, query, date, tag ->
                     
-                    // Update active dates
+                    
                     _activeDates.value = entries.map { normalizeDate(it.timestamp) }.toSet()
                     
-                    // Update all available tags (aggregate from all entries)
+                    
                     _allTags.value = entries.flatMap { it.tags }.toSet()
 
-                    // Check for Flashback (On This Day)
-                    // Use clean calendar instances
+                    
+                    
                     val todayCal = java.util.Calendar.getInstance()
                     val todayMonth = todayCal.get(java.util.Calendar.MONTH)
                     val todayDay = todayCal.get(java.util.Calendar.DAY_OF_MONTH)
@@ -108,7 +108,7 @@ class DiaryViewModel @Inject constructor(
                         val isSameDay = (entryMonth == todayMonth) && (entryDay == todayDay)
                         val isPastYear = (entryYear < todayYear)
                         
-                        // Log for debugging (in Logcat)
+                        
                         if (isSameDay) {
                             android.util.Log.d("DiaryViewModel", "Match Found! Entry: ${entry.title}, Year: $entryYear vs $todayYear")
                         }
@@ -120,17 +120,17 @@ class DiaryViewModel @Inject constructor(
 
                     var filtered = entries
                     
-                    // Filter by Date
+                    
                     if (_activeDates.value.isNotEmpty() && _selectedDate.value != null) {
                         filtered = filtered.filter { 
                             com.shuvostechworld.sonicmemories.utils.DateUtils.isSameDay(it.timestamp, _selectedDate.value!!)
                         }
                     }
                     
-                    // Filter by Tag
+                    
                     if (_selectedTag.value != null) {
                         if (_selectedTag.value == "📅 On This Day") {
-                             // "On This Day" Filter Logic
+                             
                             val nowCal = java.util.Calendar.getInstance()
                             val nowMonth = nowCal.get(java.util.Calendar.MONTH)
                             val nowDay = nowCal.get(java.util.Calendar.DAY_OF_MONTH)
@@ -151,7 +151,7 @@ class DiaryViewModel @Inject constructor(
                         }
                     }
 
-                    // Filter by Query
+                    
                     if (query.isNotBlank()) {
                         filtered = filtered.filter { 
                             it.title.contains(query, ignoreCase = true) || 
@@ -234,8 +234,8 @@ class DiaryViewModel @Inject constructor(
     }
 
     fun saveFinalEntry(file: File, mood: Int, ambientUrl: String?, tags: List<String>?, lat: Double?, lng: Double?, address: String?) {
-        // Ensure file path is stored with correct extension logic if needed, 
-        // but here we just pass the file. Repository uploads it.
+        
+        
         val entry = DiaryEntry(
             title = "Audio Memory",
             content = "Recorded on ${java.util.Date()}",
@@ -278,7 +278,7 @@ class DiaryViewModel @Inject constructor(
             ambientSoundManager.stop()
             _currentPlayingId.value = null
         } else {
-            // Stop previous if any
+            
             if (_currentPlayingId.value != null) {
                 audioPlayer.stop()
                 ambientSoundManager.stop()
@@ -286,7 +286,7 @@ class DiaryViewModel @Inject constructor(
 
             _currentPlayingId.value = entry.id
             
-            // Play Ambient if exists
+            
             if (entry.ambientSoundUrl.isNotEmpty()) {
                 android.util.Log.d("DiaryViewModel", "Playing ambient: ${entry.ambientSoundUrl} for entry: ${entry.id}")
                 ambientSoundManager.playLooping(entry.ambientSoundUrl)
@@ -294,18 +294,18 @@ class DiaryViewModel @Inject constructor(
                 android.util.Log.d("DiaryViewModel", "No ambient sound for entry: ${entry.id}")
             }
 
-            // Play Main Audio
+            
             try {
                 audioPlayer.playFile(entry.audioUrl) {
-                    // On Completion
+                    
                     _currentPlayingId.value = null
                     ambientSoundManager.stop()
                 }
                 
-                // Reverb disabled to prevent Error 1 -22 on some devices
-                // if (entry.ambientSoundUrl.isNotEmpty()) {
-                //     audioPlayer.applyReverb(PresetReverb.PRESET_LARGEROOM)
-                // }
+                
+                
+                
+                
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Playback failed: ${e.message}")
                 _currentPlayingId.value = null
@@ -317,7 +317,7 @@ class DiaryViewModel @Inject constructor(
     fun deleteEntry(entry: DiaryEntry) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteEntry(entry).collect {
-                // Deletion handled by repository, UI updates via Firestore snapshot listener automatically
+                
             }
         }
     }
@@ -333,10 +333,10 @@ class DiaryViewModel @Inject constructor(
     }
     
     fun restoreEntry(entry: DiaryEntry) {
-        saveEntry(entry, null) // Audio might be gone if local file deleted, but if it was cloud URL, it persists? 
-        // If entry has cloud URL, saveEntry handles it.
-        // Ideally we shouldn't delete immediately but mark as deleted. 
-        // For MVP, 'Undo' effectively re-saves the entry.
+        saveEntry(entry, null) 
+        
+        
+        
     }
 
     fun searchAmbientSounds(query: String) {
@@ -346,7 +346,7 @@ class DiaryViewModel @Inject constructor(
                 _ambientSounds.value = results
             } else {
                 _uiState.value = UiState.Error("No ambient sounds found for '$query'")
-                // Optional: Clear list or keep previous? Keeping previous might be better UX than clearing to empty.
+                
             }
         }
     }

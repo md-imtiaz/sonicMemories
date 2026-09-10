@@ -45,7 +45,7 @@ class CalendarAdapter(
 
         fun bind(day: CalendarDay) {
             if (day.dayOfMonth == -1) {
-                // Placeholder for empty slots
+                
                 binding.root.visibility = View.INVISIBLE
                 binding.root.setOnClickListener(null)
                 return
@@ -55,10 +55,10 @@ class CalendarAdapter(
 
             binding.tvDay.text = day.dayOfMonth.toString()
             
-            // Highlight selected
+            
             if (day.isSelected) {
                 binding.cardDay.setCardBackgroundColor(
-                    androidx.core.content.ContextCompat.getColor(binding.root.context, R.color.purple_200) // Using default accent or similar
+                    androidx.core.content.ContextCompat.getColor(binding.root.context, R.color.purple_200) 
                 )
                 binding.tvDay.setTextColor(
                     androidx.core.content.ContextCompat.getColor(binding.root.context, android.R.color.black)
@@ -68,18 +68,18 @@ class CalendarAdapter(
                     androidx.core.content.ContextCompat.getColor(binding.root.context, android.R.color.transparent)
                 )
                 binding.tvDay.setTextColor(
-                     androidx.core.content.ContextCompat.getColor(binding.root.context, android.R.color.white) // Assuming dark theme default
+                     androidx.core.content.ContextCompat.getColor(binding.root.context, android.R.color.white) 
                 )
             }
 
-            // Indicator
+            
             binding.ivIndicator.visibility = if (day.hasMemory) View.VISIBLE else View.GONE
 
             binding.root.setOnClickListener {
                 onDateClick(day)
             }
             
-            // Accessibility
+            
             val niceDate = "$currentMonthName ${day.dayOfMonth}"
             val memoryState = if(day.hasMemory) "Has saved memories." else "No memories."
             val selectionState = if(day.isSelected) "Selected." else "Double tap to select."

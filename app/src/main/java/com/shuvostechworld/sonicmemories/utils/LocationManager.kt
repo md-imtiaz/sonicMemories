@@ -25,7 +25,7 @@ class LocationManager @Inject constructor(
     private val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
     suspend fun getCurrentLocation(): Location? {
-        // checks permission first
+        
         try {
             if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED &&
                 androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
@@ -35,16 +35,16 @@ class LocationManager @Inject constructor(
             return kotlinx.coroutines.withContext(Dispatchers.IO) {
                 var finalLocation: Location? = null
                 
-                // 1. Try Last Known First (Fastest)
+                
                 try {
                      finalLocation = awaitTask(fusedLocationClient.lastLocation)
                 } catch (e: Exception) {
-                     // Ignore
+                     
                 }
                 
                 if (finalLocation != null) return@withContext finalLocation
 
-                // 2. If null, Try Fresh w/ High Accuracy
+                
                 try {
                     val cancellationTokenSource = com.google.android.gms.tasks.CancellationTokenSource()
                     finalLocation = awaitTask(
@@ -54,7 +54,7 @@ class LocationManager @Inject constructor(
                          )
                     )
                 } catch (e: Exception) {
-                    // Ignore
+                    
                 }
                 
                 return@withContext finalLocation
@@ -65,13 +65,13 @@ class LocationManager @Inject constructor(
         }
     }
     
-    // Helper to avoid dependency and extension issues
+    
     private suspend fun <T> awaitTask(task: Task<T>): T? = suspendCancellableCoroutine { cont ->
         task.addOnSuccessListener { result ->
             cont.resume(result)
         }
         task.addOnFailureListener { e ->
-            cont.resume(null) // Return null on failure for our use case
+            cont.resume(null) 
         }
     }
 
@@ -81,7 +81,7 @@ class LocationManager @Inject constructor(
                 val geocoder = Geocoder(context, Locale.getDefault())
                 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                    // API 33+ Async
+                    
                     return@withContext suspendCancellableCoroutine<String?> { cont ->
                         geocoder.getFromLocation(location.latitude, location.longitude, 1) { addresses ->
                             if (addresses.isNotEmpty()) {
@@ -92,7 +92,7 @@ class LocationManager @Inject constructor(
                         }
                     }
                 } else {
-                    // Legacy Synchronous
+                    
                     @Suppress("DEPRECATION")
                     val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                     if (!addresses.isNullOrEmpty()) {

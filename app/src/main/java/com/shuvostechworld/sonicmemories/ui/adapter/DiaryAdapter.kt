@@ -36,9 +36,9 @@ class DiaryAdapter(
 
     fun submitEntries(entries: List<DiaryEntry>) {
         val groupedList = mutableListOf<ListItem>()
-        val dateFormat = SimpleDateFormat("EEEE, dd MMMM", Locale.getDefault()) // e.g. "Monday, 12 December"
+        val dateFormat = SimpleDateFormat("EEEE, dd MMMM", Locale.getDefault()) 
         
-        // Group by day
+        
         val grouped = entries.sortedByDescending { it.timestamp }.groupBy { 
             dateFormat.format(Date(it.timestamp)) 
         }
@@ -55,7 +55,7 @@ class DiaryAdapter(
         val previousId = currentPlayingId
         currentPlayingId = playingId
         
-        // Find positions to notify (Scanning list since ID map is not kept)
+        
         currentList.forEachIndexed { index, item ->
             if (item is ListItem.Entry) {
                 if (item.entry.id == previousId || item.entry.id == playingId) {
@@ -103,7 +103,7 @@ class DiaryAdapter(
         }
     }
 
-    // ...
+    
 
     class HeaderViewHolder(private val binding: ItemDateHeaderBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(header: ListItem.Header) {
@@ -126,42 +126,42 @@ class DiaryAdapter(
             binding.tvTitle.text = entry.title
             binding.tvTime.text = timeString
             
-            // Mood Coloring & Accessibility
+            
             val moodColor: Int
             val moodDescription: String
             
             when (entry.mood) {
-                1 -> { // Awful (Sad)
-                    moodColor = Color.parseColor("#FF5252") // Red
+                1 -> { 
+                    moodColor = Color.parseColor("#FF5252") 
                     moodDescription = "Difficult Memory"
                 }
-                2 -> { // Bad
-                    moodColor = Color.parseColor("#FF9800") // Orange
+                2 -> { 
+                    moodColor = Color.parseColor("#FF9800") 
                     moodDescription = "Bad Memory"
                 }
-                3 -> { // Okay
-                    moodColor = Color.parseColor("#FFEB3B") // Yellow
+                3 -> { 
+                    moodColor = Color.parseColor("#FFEB3B") 
                     moodDescription = "Okay Memory"
                 }
-                4 -> { // Good
-                    moodColor = Color.parseColor("#CDDC39") // Lime
+                4 -> { 
+                    moodColor = Color.parseColor("#CDDC39") 
                     moodDescription = "Good Memory"
                 }
-                5 -> { // Great
-                    moodColor = Color.parseColor("#00E5FF") // Cyan
+                5 -> { 
+                    moodColor = Color.parseColor("#00E5FF") 
                     moodDescription = "Great Memory"
                 }
-                else -> { // Default
+                else -> { 
                     moodColor = Color.parseColor("#AAAAAA")
                     moodDescription = "Memory"
                 }
             }
             
-            // Apply Mood Color to Icon and Play Button
+            
             binding.ivMood.setColorFilter(moodColor)
             binding.root.strokeColor = moodColor
             
-            // Accessibility
+            
             binding.root.contentDescription = "$moodDescription. ${entry.title}. Created at $timeString."
 
             if (entry.audioUrl.isNotEmpty()) {
@@ -183,7 +183,7 @@ class DiaryAdapter(
                 binding.layoutAudio.visibility = android.view.View.GONE
             }
             
-            // Location
+            
             if (!entry.locationAddress.isNullOrEmpty()) {
                 binding.chipLocation.visibility = android.view.View.VISIBLE
                 binding.chipLocation.text = entry.locationAddress
@@ -197,7 +197,7 @@ class DiaryAdapter(
                     try {
                         binding.root.context.startActivity(mapIntent)
                     } catch (e: Exception) {
-                         // Fallback if Maps is not installed
+                         
                          val webIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse("https://www.google.com/maps/search/?api=1&query=${android.net.Uri.encode(entry.locationAddress)}"))
                          binding.root.context.startActivity(webIntent)
                     }
@@ -209,7 +209,7 @@ class DiaryAdapter(
             binding.btnPlay.setOnClickListener { onPlayClick(entry) }
             binding.root.setOnClickListener { onItemClick(entry) }
             
-            // New Action Buttons
+            
             binding.btnEdit.setOnClickListener { onEditClick(entry) }
             binding.btnDelete.setOnClickListener { onDeleteClick(entry) }
         }

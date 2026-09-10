@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.core.os.bundleOf
-// import androidx.fragment.app.setFragmentResult removed
+
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -54,7 +54,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         recordedFilePath = arguments?.getString(ARG_FILE_PATH)
-        isCancelable = false // Modal behavior
+        isCancelable = false 
     }
 
     override fun onCreateView(
@@ -68,7 +68,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
 
     private val selectedTags = mutableListOf<String>()
     
-    // Voice Input Launcher
+    
     private val voiceInputLauncher = registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == android.app.Activity.RESULT_OK) {
             val data = result.data
@@ -80,7 +80,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
         }
     }
     
-    // Location Permission Launcher
+    
     private val locationPermissionLauncher = registerForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -99,7 +99,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
     
     private fun onVoiceInputResult(text: String) {
         pendingVoiceInputEditText?.setText(text)
-        pendingVoiceInputEditText = null // Reset
+        pendingVoiceInputEditText = null 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -120,7 +120,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
         ) {
             fetchLocationInternal()
         } else {
-            // Request permissions
+            
             locationPermissionLauncher.launch(arrayOf(
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION
@@ -129,7 +129,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun fetchLocationInternal() {
-        // Show fetching state
+        
         binding.tvLocationText.text = "Fetching location..."
         binding.layoutLocationContainer.contentDescription = "Fetching location..."
         
@@ -166,21 +166,21 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
         editText.setText(currentLocationAddress ?: "")
         editText.hint = "Enter Location"
         
-        // Container for EditText and Mic
+        
         val container = android.widget.LinearLayout(requireContext())
         container.orientation = android.widget.LinearLayout.HORIZONTAL
         container.setPadding(48, 24, 48, 24)
         container.gravity = android.view.Gravity.CENTER_VERTICAL
         
-        // Layout params for EditText
+        
         val params = android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT)
         params.weight = 1f
         editText.layoutParams = params
         
-        // Mic Button
+        
         val micButton = android.widget.ImageButton(requireContext())
         micButton.setImageResource(android.R.drawable.ic_btn_speak_now)
-        micButton.background = null // Transparent
+        micButton.background = null 
         micButton.contentDescription = "Voice Type Location"
         micButton.setOnClickListener {
             startVoiceInput(editText)
@@ -217,7 +217,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
     private fun setupTags() {
         val categories = listOf("Daily", "Idea", "Family", "Work", "Travel", "Important", "Feeling", "Memory")
         
-        // Dropdown Adapter
+        
         val adapter = android.widget.ArrayAdapter<String>(requireContext(), android.R.layout.simple_dropdown_item_1line, categories)
         binding.autoCompleteAddTag.setAdapter(adapter)
 
@@ -228,15 +228,15 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
                     selectedTags.add(selectedTag)
                     addChipToGroup(selectedTag)
                 }
-                binding.autoCompleteAddTag.setText("") // Clear input
+                binding.autoCompleteAddTag.setText("") 
             }
         }
         
-        // Manual Entry via Keyboard action
+        
         binding.inputLayoutAddTag.setEndIconOnClickListener {
-             // If we had an end icon for manual add, but dropdown handles typing + enter usually.
-             // But TextInputLayout endIconMode="dropdown" usually.
-             // Let's check text on IME Action if user types new tag not in list?
+             
+             
+             
              addTagFromInput()
         }
         
@@ -250,7 +250,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
         }
     }
     
-    // Helper to get text from autocomplete
+    
     private fun addTagFromInput() {
          val tagText = binding.autoCompleteAddTag.text.toString().trim()
          if (tagText.isNotEmpty()) {
@@ -262,7 +262,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
          }
     }
 
-    // ... 
+    
 
     private fun setupAmbientSounds() {
         ambientAdapter = AmbientSoundAdapter(
@@ -283,7 +283,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
                 selectedAmbientSoundUrl = soundItem.previews?.previewHqMp3
                 ambientAdapter.setSelection(soundItem.id)
                 
-                // Update UI: Hide list, show selected
+                
                 showSelectedAmbientState(soundItem.name)
                 
                 AccessibilityUtils.announceToScreenReader(binding.layoutSelectedAmbient, "Selected ${soundItem.name}. List hidden.")
@@ -299,7 +299,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
             resetAmbientSelection()
         }
 
-        // Dropdown selection logic
+        
         val categories = listOf("Rain", "Forest", "Ocean", "Fire", "Night", "Train", "Cafe", "Birds", "Wind", "Thunder", "Cave")
         val adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, categories)
         (binding.inputLayoutAmbient.editText as? android.widget.AutoCompleteTextView)?.apply {
@@ -310,7 +310,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
             }
         }
 
-        // Collect results
+        
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ambientSounds.collect { sounds ->
                 ambientAdapter.submitList(sounds)
@@ -343,17 +343,17 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
             binding.chipGroupTags.removeView(chip)
             selectedTags.remove(tag)
         }
-        // Style handles colors now
-        // chip.setTextColor(...)
-        // chip.chipBackgroundColor = ...
+        
+        
+        
         binding.chipGroupTags.addView(chip)
     }
 
-    // ... (Existing Setup Methods) ...
+    
 
     private fun setupButtons() {
         binding.btnSave.setOnClickListener {
-            // Return result to Activity
+            
                 val resultBundle = Bundle().apply {
                     putBoolean(RESULT_SAVED, true)
                     putInt(RESULT_MOOD, currentMood)
@@ -390,7 +390,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
             .show()
     }
 
-    // ... 
+    
 
 
 
@@ -412,13 +412,13 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
                 if (path != null) {
                     val file = File(path)
                     if (file.exists()) {
-                        // Play Ambient if selected
+                        
                         val startVoice = {
-                            // Play Voice
+                            
                             audioPlayer.playFile(path) {
                                 Handler(Looper.getMainLooper()).post {
                                     updatePlayPauseIcon(false)
-                                    ambientSoundManager.stop() // Stop ambient when voice ends
+                                    ambientSoundManager.stop() 
                                 }
                             }
                         }
@@ -448,11 +448,11 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun setupMoodSlider() {
-        // Range 1-5 (SeekBar is 0-4, plus 1)
+        
         binding.seekbarMood.max = 4 
-        // Initial State
+        
         val initialMoodIndex = currentMood - 1
-        binding.seekbarMood.progress = if (initialMoodIndex < 0) 2 else initialMoodIndex // Default to 3 (Okay) if 0
+        binding.seekbarMood.progress = if (initialMoodIndex < 0) 2 else initialMoodIndex 
         updateMoodLabel(binding.seekbarMood.progress + 1)
         
         binding.seekbarMood.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -463,11 +463,11 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
                 updateMoodLabel(moodValue)
                 
                 if (fromUser) {
-                    // Haptic Feedback
-                     if (moodValue == 5) { // Max
+                    
+                     if (moodValue == 5) { 
                         view?.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
                     } else {
-                        view?.performHapticFeedback(HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING) // Light tick
+                        view?.performHapticFeedback(HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING) 
                     }
                 }
             }
@@ -484,7 +484,7 @@ class ReviewBottomSheet : BottomSheetDialogFragment() {
     private fun updateMoodLabel(moodValue: Int) {
         val moodText = getMoodString(moodValue)
         binding.tvMoodLabel.text = getString(com.shuvostechworld.sonicmemories.R.string.mood_label_format, moodText)
-        // Set State Description for Accessibility (API 30+)
+        
         androidx.core.view.ViewCompat.setStateDescription(binding.seekbarMood, moodText)
     }
 

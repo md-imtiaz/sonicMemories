@@ -52,7 +52,7 @@ class OnboardingActivity : AppCompatActivity() {
                 super.onPageSelected(position)
                 updateUI(position, items.size)
                 
-                // Accessibility: Announce the new page content
+                
                 val item = items[position]
                 val announcement = "Page ${position + 1} of ${items.size}. ${item.title}. ${item.description}"
                 com.shuvostechworld.sonicmemories.utils.AccessibilityUtils.announceToScreenReader(binding.root, announcement)

@@ -55,7 +55,7 @@ class SignInActivity : AppCompatActivity() {
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
             .setServerClientId(clientId)
-            .setAutoSelectEnabled(false) // Allow user to choose even if they only have one account
+            .setAutoSelectEnabled(false) 
             .build()
 
         val request = GetCredentialRequest.Builder()
@@ -70,7 +70,7 @@ class SignInActivity : AppCompatActivity() {
                 )
                 handleSignIn(result)
             } catch (e: GetCredentialException) {
-                // Determine if it was a user cancellation or other error
+                
                 if (e.message?.contains("User canceled") == true || e.message?.contains("Interrupted") == true) {
                     Toast.makeText(this@SignInActivity, "Sign-In Canceled", Toast.LENGTH_SHORT).show()
                 } else {
