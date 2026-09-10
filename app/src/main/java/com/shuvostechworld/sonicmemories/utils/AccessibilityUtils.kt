@@ -7,9 +7,7 @@ object AccessibilityUtils {
     fun announceToScreenReader(view: View, text: String) {
         val accessibilityManager = view.context.getSystemService(android.content.Context.ACCESSIBILITY_SERVICE) as? android.view.accessibility.AccessibilityManager
         if (accessibilityManager?.isEnabled == true) {
-            val event = AccessibilityEvent()
-            @Suppress("DEPRECATION")
-            event.eventType = AccessibilityEvent.TYPE_ANNOUNCEMENT
+            val event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_ANNOUNCEMENT)
             event.text.add(text)
             event.className = AccessibilityUtils::class.java.name
             event.packageName = view.context.packageName
