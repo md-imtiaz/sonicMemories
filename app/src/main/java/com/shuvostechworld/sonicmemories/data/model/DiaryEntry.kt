@@ -1,17 +1,17 @@
 package com.shuvostechworld.sonicmemories.data.model
 
 data class DiaryEntry(
-    val id: String = "",
-    val userId: String = "",
-    val title: String = "",
-    val content: String = "",
-    val audioUrl: String = "",
-    val ambientSoundUrl: String = "",
-    val mood: Int = 0,
-    val timestamp: Long = 0L,
-    val synced: Boolean = true,
-    val tags: List<String> = emptyList(),
-    val latitude: Double? = null,
-    val longitude: Double? = null,
-    val locationAddress: String? = null
+    var id: String = "",
+    var userId: String = "",
+    var title: String = "",
+    var content: String = "",
+    var audioUrl: String = "",
+    var ambientSoundUrl: String = "",
+    var mood: Int = 0,
+    var timestamp: Long = 0L,
+    var synced: Boolean = true,
+    var tags: List<String> = listOf(),
+    var latitude: Double? = null,
+    var longitude: Double? = null,
+    var locationAddress: String? = null
 )

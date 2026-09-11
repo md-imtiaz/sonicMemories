@@ -85,7 +85,33 @@ class DiaryRepositoryImpl @Inject constructor(
 
                 if (snapshot != null) {
                     try {
-                        val entries = snapshot.toObjects(DiaryEntry::class.java)
+                        val entries = snapshot.documents.mapNotNull { doc ->
+                            try {
+                                doc.toObject(DiaryEntry::class.java)?.apply {
+                                    if (this.id.isEmpty()) this.id = doc.id
+                                }
+                            } catch (e: Exception) {
+                                try {
+                                    DiaryEntry(
+                                        id = doc.id,
+                                        userId = doc.getString("userId") ?: "",
+                                        title = doc.getString("title") ?: "",
+                                        content = doc.getString("content") ?: "",
+                                        audioUrl = doc.getString("audioUrl") ?: "",
+                                        ambientSoundUrl = doc.getString("ambientSoundUrl") ?: "",
+                                        mood = doc.getLong("mood")?.toInt() ?: 0,
+                                        timestamp = doc.getLong("timestamp") ?: 0L,
+                                        synced = doc.getBoolean("synced") ?: true,
+                                        tags = (doc.get("tags") as? List<String>) ?: listOf(),
+                                        latitude = doc.getDouble("latitude"),
+                                        longitude = doc.getDouble("longitude"),
+                                        locationAddress = doc.getString("locationAddress")
+                                    )
+                                } catch (innerE: Exception) {
+                                    null
+                                }
+                            }
+                        }
                         trySend(entries)
                     } catch (e: Exception) {
                         
@@ -160,8 +186,32 @@ class DiaryRepositoryImpl @Inject constructor(
 
     override fun getEntryById(id: String): Flow<DiaryEntry?> = flow {
         try {
-            val snapshot = firestore.collection("diaries").document(id).get().await()
-            val entry = snapshot.toObject(DiaryEntry::class.java)
+            val doc = firestore.collection("diaries").document(id).get().await()
+            val entry = try {
+                doc.toObject(DiaryEntry::class.java)?.apply {
+                    if (this.id.isEmpty()) this.id = doc.id
+                }
+            } catch (e: Exception) {
+                try {
+                    DiaryEntry(
+                        id = doc.id,
+                        userId = doc.getString("userId") ?: "",
+                        title = doc.getString("title") ?: "",
+                        content = doc.getString("content") ?: "",
+                        audioUrl = doc.getString("audioUrl") ?: "",
+                        ambientSoundUrl = doc.getString("ambientSoundUrl") ?: "",
+                        mood = doc.getLong("mood")?.toInt() ?: 0,
+                        timestamp = doc.getLong("timestamp") ?: 0L,
+                        synced = doc.getBoolean("synced") ?: true,
+                        tags = (doc.get("tags") as? List<String>) ?: listOf(),
+                        latitude = doc.getDouble("latitude"),
+                        longitude = doc.getDouble("longitude"),
+                        locationAddress = doc.getString("locationAddress")
+                    )
+                } catch (inner: Exception) {
+                    null
+                }
+            }
             emit(entry)
         } catch (e: Exception) {
             emit(null)

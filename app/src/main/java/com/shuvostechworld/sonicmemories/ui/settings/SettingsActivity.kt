@@ -157,9 +157,23 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent(this, com.shuvostechworld.sonicmemories.ui.onboarding.OnboardingActivity::class.java))
         }
         
-        binding.btnPrivacy.setOnClickListener {
-             
+        binding.root.findViewById<android.view.View>(com.shuvostechworld.sonicmemories.R.id.btn_privacy)?.setOnClickListener {
              openUrl(getString(com.shuvostechworld.sonicmemories.R.string.website_url) + "/privacy")
+        }
+        
+        binding.root.findViewById<android.view.View>(com.shuvostechworld.sonicmemories.R.id.btn_logout)?.setOnClickListener {
+            com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+            
+            val gso = com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(
+                com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN
+            ).build()
+            val googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(this, gso)
+            googleSignInClient.signOut().addOnCompleteListener {
+                val intent = Intent(this, com.shuvostechworld.sonicmemories.ui.auth.SignInActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                startActivity(intent)
+                finish()
+            }
         }
     }
     
